@@ -33,15 +33,21 @@ app.use(bodyParser.json());
 
 //routes
 app.get('/', function(req,res){
-  res.json({'status': 'ok'}).status(200);
+  res.status(200).json({'status': 'ok'});
 });
 
 app.get('/api/TodoItems', function(req,res){
-  res.json(array).status(200);
+  res.status(200).json(array);
 });
 
 app.get('/api/TodoItems/:number', function(req,res){
-  res.json(array[req.params.number]).status(200);
+  let itemMatch;
+  array.forEach(toDoItem => {
+    if(toDoItem.todoItemId == req.params.number){
+      itemMatch = toDoItem;
+    }
+  });
+  res.status(200).json(itemMatch);
 });
 
 app.post('/api/TodoItems', function(req,res){
@@ -53,7 +59,7 @@ app.post('/api/TodoItems', function(req,res){
       array.push(postToDo);
     }
   })
-  res.send(postToDo).status(201);
+  res.status(201).send(postToDo);
 });
 
 app.delete('/api/TodoItems/:number', function(req,res){
@@ -64,7 +70,7 @@ app.delete('/api/TodoItems/:number', function(req,res){
       deleted = array.splice(index, 1);
     }
   })
-  res.send(deleted).status(200);
+  res.status(200).send(deleted[0]);
 });
 
 module.exports = app;
