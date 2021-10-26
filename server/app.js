@@ -49,9 +49,22 @@ app.post('/api/TodoItems', function(req,res){
   array.forEach((toDo, index)=> {
     if(postToDo.todoItemId == toDo.todoItemId){
       array.splice(index, 1, postToDo);
+    } else {
+      array.push(postToDo);
     }
   })
-  res.send(array);
+  res.send(postToDo).status(201);
+});
+
+app.delete('/api/TodoItems/:number', function(req,res){
+  let deleteToDoId = req.params.number;
+  let deleted = `Todo ID# ${deleteToDoId} does not exist.`
+  array.forEach((toDo, index) => {
+    if(deleteToDoId == toDo.todoItemId){
+      deleted = array.splice(index, 1);
+    }
+  })
+  res.send(deleted).status(200);
 });
 
 module.exports = app;
