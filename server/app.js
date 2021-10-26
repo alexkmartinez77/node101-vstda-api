@@ -29,30 +29,29 @@ app.set('json spaces', 2);
 
 //middleware
 app.use(morgan('dev'));
-//app.use(bodyParser.json());
-
+app.use(bodyParser.json());
 
 //routes
 app.get('/', function(req,res){
-
-  res.json({'status': 'ok'});
-  res.status(200);
-
+  res.json({'status': 'ok'}).status(200);
 });
 
 app.get('/api/TodoItems', function(req,res){
-  
-  res.json(array);
-  res.status(200);
+  res.json(array).status(200);
+});
 
-})
 app.get('/api/TodoItems/:number', function(req,res){
-  
-  console.log(req.params.number);
-  res.json(array[req.params.number]);
-  res.status(200);
+  res.json(array[req.params.number]).status(200);
+});
 
-})
-
+app.post('/api/TodoItems', function(req,res){
+  let postToDo = req.body;
+  array.forEach((toDo, index)=> {
+    if(postToDo.todoItemId == toDo.todoItemId){
+      array.splice(index, 1, postToDo);
+    }
+  })
+  res.send(array);
+});
 
 module.exports = app;
