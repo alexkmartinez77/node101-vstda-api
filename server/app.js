@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-var array = [
+var cache = [
 	{
 		todoItemId: 0,
 		name: 'an item',
@@ -37,40 +37,21 @@ app.get('/', function(req,res){
 });
 
 app.get('/api/TodoItems', function(req,res){
-  res.status(200).json(array);
+  res.status(200).json(cache);
 });
 
 app.get('/api/TodoItems/:number', function(req,res){
-  let itemMatch;
-  array.forEach(toDoItem => {
-    if(toDoItem.todoItemId == req.params.number){
-      itemMatch = toDoItem;
-    }
-  });
-  res.status(200).json(itemMatch);
+  res.status(200).json(cache.find(toDoItem => toDoItem.todoItemId == req.params.number));
 });
 
 app.post('/api/TodoItems', function(req,res){
-  let postToDo = req.body;
-  array.forEach((toDo, index)=> {
-    if(postToDo.todoItemId == toDo.todoItemId){
-      array.splice(index, 1, postToDo);
-    } else {
-      array.push(postToDo);
-    }
-  })
-  res.status(201).send(postToDo);
+  let foundIndex = cache.findIndex(toDoItem => toDoItem.todoItemId == req.body.todoItemId)
+  foundIndex > -1 ? cache.splice(foundIndex, 1, req.body) : cache.push(req.body);
+  res.status(201).send(req.body);
 });
 
 app.delete('/api/TodoItems/:number', function(req,res){
-  let deleteToDoId = req.params.number;
-  let deleted = `Todo ID# ${deleteToDoId} does not exist.`
-  array.forEach((toDo, index) => {
-    if(deleteToDoId == toDo.todoItemId){
-      deleted = array.splice(index, 1);
-    }
-  })
-  res.status(200).send(deleted[0]);
+  res.status(200).send(cache.splice(cache.findIndex(toDoItem => toDoItem.todoItemId == req.params.number), 1).shift());
 });
 
 module.exports = app;
